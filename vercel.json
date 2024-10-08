@@ -1,22 +1,31 @@
 {
+
   "version": 2,
+
   "builds": [
-    {
-      "src": "src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "installCommand": "npx prisma generate" 
+
+      {
+
+          "src": "src/main.ts",
+
+          "use": "@vercel/node"
+
       }
-    }
+
   ],
+
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
-      "dest": "/src/main.ts"
-    }
-  ],
-  "cache": {
-    "ignore": ["node_modules/.prisma"]
-  }
+
+      {
+
+          "src": "/api/(.*)",
+
+          "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+
+          "dest": "/src/main.ts"
+
+      }
+
+  ]
+
 }

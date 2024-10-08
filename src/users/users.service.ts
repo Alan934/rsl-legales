@@ -23,8 +23,11 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     }
 
     async getOne(id: number){
-        const user = await this.usuario.findUnique({
-            where: { id, deleted: false },
+        const user = await this.usuario.findFirst({
+            where: {
+                id: id,
+                deleted: false,
+            },
         });
         try {
             if (!user) {
@@ -52,7 +55,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
             return this.usuario.create({
               data: {
                 ...createUserDto,
-                password: hashedPassword,
+                //password: hashedPassword,
               },
             });
             //return this.usuario.create({data: createUserDto});
@@ -64,7 +67,9 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     update(id: number, updateUserDto: UpdateUserDto){
         try {
             return this.usuario.update({
-                where: { id, deleted: false },
+                where: {
+                    id: id,
+                },
                 data: updateUserDto,
             });
         } catch (error) {
@@ -82,5 +87,15 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         } catch (error) {
             throw new Error(error);
         }      
+    }
+
+    async countUsers() {
+        try {
+            return await this.usuario.count({
+                where: { deleted: false },
+            });
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 }

@@ -12,6 +12,11 @@ export class UsersController {
   getAll() {
     return this.usersService.getAll();
   }
+  
+  @Get('count')
+  async countUsers() {
+      return await this.usersService.countUsers();
+  }
 
   @Get(':id')
   getOne(@Param('id') id: number) {
@@ -32,5 +37,5 @@ export class UsersController {
   delete(@Param('id') id: number) {
     return this.usersService.delete(Number(id));
   }
-
+  
 }
