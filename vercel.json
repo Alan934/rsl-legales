@@ -5,7 +5,7 @@
       "src": "src/main.ts",
       "use": "@vercel/node",
       "config": {
-        "installCommand": "npm install && npx prisma generate" 
+        "installCommand": "npx prisma generate" 
       }
     }
   ],
@@ -15,5 +15,8 @@
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
       "dest": "/src/main.ts"
     }
-  ]
+  ],
+  "cache": {
+    "ignore": ["node_modules/.prisma"]
+  }
 }
