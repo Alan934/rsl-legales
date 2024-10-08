@@ -1,16 +1,22 @@
 {
   "version": 2,
   "builds": [
-      {
-          "src": "src/main.ts",
-          "use": "@vercel/node"
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node",
+      "config": {
+        "installCommand": "npm install && npx prisma generate" 
       }
+    }
   ],
   "routes": [
-      {
-          "src": "/api/(.*)",
-          "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
-          "dest": "/src/main.ts"
-      }
-  ]
+    {
+      "src": "/api/(.*)",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      "dest": "/src/main.ts"
+    }
+  ],
+  "env": {
+    "POSTGRES_PRISMA_URL":"postgres://default:iIv9ozeAPnG5@ep-late-thunder-a4gizqoj-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15"
+  }
 }
