@@ -5,7 +5,10 @@ import { envs } from './config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3000', '*'],
+    origin: '*',  // Permitir todas las solicitudes
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',  // Añadir OPTIONS para pre-flight
+    allowedHeaders: 'Content-Type, Accept, Authorization',  // Permitir encabezados adicionales si es necesario
+    credentials: true,  // Habilitar si necesitas enviar cookies
   });
   app.setGlobalPrefix('api');
 
