@@ -2,13 +2,19 @@ import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/com
 import { CreateFormularioDto } from './dto/create-formulario.dto';
 import { UpdateFormularioDto } from './dto/update-formulario.dto';
 import { PrismaClient, ServicioRequerido } from '@prisma/client';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class FormularioService extends PrismaClient implements OnModuleInit{
-  private readonly logger = new Logger('UsersService');
+  private readonly logger = new Logger('FormularioService');
+
+  constructor(private readonly usersService: UsersService) {
+    super();
+  }
+
   onModuleInit() {
       this.$connect();
-      this.logger.log('Connected to DB');
+      this.logger.log('Formulario Connected to DB');
   }
 
   //retorna [
@@ -27,13 +33,30 @@ export class FormularioService extends PrismaClient implements OnModuleInit{
   
   async create(createFormularioDto: CreateFormularioDto) {
     try {
+      // Buscar usuario por email
+      let usuario = await this.usersService.findByEmail(createFormularioDto.email).catch(() => null);
+      
+      // Si no existe, crearlo sin contraseña
+      if (!usuario) {
+        usuario = await this.usersService.create({
+          email: createFormularioDto.email,
+          nombre: createFormularioDto.nombreCompleto.split(' ')[0], // Extraer nombre del campo completo
+          apellido: createFormularioDto.nombreCompleto.split(' ')[1] || '',
+          edad: 0,
+          password: '',
+        });
+      }
+
       return this.formulario.create({
-          data: createFormularioDto
+        data: {
+          ...createFormularioDto,
+          usuarioId: usuario.id, // Relacion del formulario con el usuario
+        },
       });
-      //return this.usuario.create({data: createUserDto});
     } catch (error) {
+      this.logger.error(`Error creating form: ${error.message}`);
       throw new Error(error);
-  }
+    }
   }
 
   async exists(id: number) {

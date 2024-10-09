@@ -24,24 +24,26 @@ enum ServicioRequerido {
   CONTRATOS_PRIVADOS
 }
 
+model Formulario {
+  id                 Int    @id @default(autoincrement())
+  nombreCompleto     String
+  email              String
+  telefono           String
+  servicioRequerido  ServicioRequerido
+  mensaje            String
+  available          Boolean @default(true)
+  usuario            Usuario? @relation(fields: [usuarioId], references: [id]) // Relación con Usuario
+  usuarioId          Int?
+}
+
 model Usuario {
   id        Int    @id @default(autoincrement())
   nombre    String
   apellido  String
   edad      Int
   email     String @unique
-  password  String
-  role      Role   @default(USUARIO)  // Enum para el rol
-  deleted         Boolean     @default(false)
-  @@map("usuarios")
-}
-
-model Formulario {
-  id            Int    @id @default(autoincrement())
-  nombreCompleto       String
-  email                String
-  telefono             String
-  servicioRequerido    ServicioRequerido //Enum??
-  mensaje              String
-  available            Boolean  @default(true)
+  password  String?
+  role      Role   @default(USUARIO)
+  deleted   Boolean @default(false)
+  formularios      Formulario[]  // Relación inversa
 }

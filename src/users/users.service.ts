@@ -9,7 +9,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     private readonly logger = new Logger('UsersService');
     onModuleInit() {
         this.$connect();
-        this.logger.log('Connected to DB');
+        this.logger.log('Users Connected to DB');
     }
 
     getAll(){
@@ -49,20 +49,24 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         return user;
     }
 
-    async create(createUserDto: CreateUserDto){
+    async create(createUserDto: CreateUserDto) {
         try {
-            const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-            return this.usuario.create({
-              data: {
-                ...createUserDto,
-                //password: hashedPassword,
-              },
-            });
-            //return this.usuario.create({data: createUserDto});
+          let hashedPassword = '';
+          
+          if (createUserDto.password) {
+            hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+          }
+      
+          return this.usuario.create({
+            data: {
+              ...createUserDto,
+              password: hashedPassword || null, // Permitir que la contraseña sea null
+            },
+          });
         } catch (error) {
-            throw new Error(error);
+          throw new Error(error);
         }
-    }
+      }
 
     update(id: number, updateUserDto: UpdateUserDto){
         try {

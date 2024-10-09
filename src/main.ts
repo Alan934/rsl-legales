@@ -4,7 +4,11 @@ import { envs } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app. enableCors();
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept',
+  });
   app.setGlobalPrefix('api');
 
   await app.listen(envs.port);
