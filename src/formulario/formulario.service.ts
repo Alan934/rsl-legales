@@ -31,33 +31,45 @@ export class FormularioService extends PrismaClient implements OnModuleInit{
     //return Object.values(ServicioRequerido);
   }  
   
-  async create(createFormularioDto: CreateFormularioDto) {
+  async create(createFormularioDto: CreateFormularioDto, res) {
     try {
       // Buscar usuario por email
-      let usuario = await this.usersService.findByEmail(createFormularioDto.email).catch(() => null);
-      
+      let usuario = await this.usersService.findByEmail(createFormularioDto.email).catch((error) => {
+        this.logger.error(`Error finding user: ${error.message}`);
+        return null;
+      });
+  
       // Si no existe, crearlo sin contraseña
       if (!usuario) {
+        const [nombre, ...apellidos] = createFormularioDto.nombreCompleto.split(' ');
         usuario = await this.usersService.create({
           email: createFormularioDto.email,
-          nombre: createFormularioDto.nombreCompleto.split(' ')[0], // Extraer nombre del campo completo
-          apellido: createFormularioDto.nombreCompleto.split(' ')[1] || '',
-          edad: 0,
-          password: '',
+          nombre: nombre,
+          apellido: apellidos.join(' ') || '', // Manejar apellidos compuestos
+          edad: 0, // Valor predeterminado, ajusta según sea necesario
+          password: '', // Contraseña vacía ya que será generada más tarde
         });
       }
-
-      return this.formulario.create({
+  
+      const formulario = await this.formulario.create({
         data: {
           ...createFormularioDto,
-          usuarioId: usuario.id, // Relacion del formulario con el usuario
+          usuarioId: usuario.id, // Relacionar el formulario con el usuario
         },
       });
+  
+      // Agregar las cabeceras CORS explícitamente en la respuesta
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+  
+      return res.status(201).json(formulario); // Devolver el formulario creado con status 201
     } catch (error) {
       this.logger.error(`Error creating form: ${error.message}`);
       throw new Error(error);
     }
   }
+  
 
   async exists(id: number) {
     const product = await this.formulario.findFirst({
