@@ -100,7 +100,7 @@ Nota Adicional
 
     - Asegúrate de que todas las variables de entorno necesarias estén configuradas. Algunas aplicaciones requieren un archivo .env con configuraciones específicas. Verifica si hay un archivo .env.example o documentación sobre cómo configurar las variables de entorno.
 ¡Y eso es todo! Con estos pasos, deberías poder ejecutar tu proyecto de Node.js en tu entorno local. 
-
+##
 ## 👨‍💻 Equipo ( GRUPO RSL-Legales )
 
 <table align="center">

@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateFormularioDto } from './dto/create-formulario.dto';
 import { UpdateFormularioDto } from './dto/update-formulario.dto';
-import { PrismaClient, ServicioRequerido } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -17,48 +17,52 @@ export class FormularioService extends PrismaClient implements OnModuleInit{
       this.logger.log('Formulario Connected to DB');
   }
 
-  //retorna [
-  //   "CERTIFICACIONES",
-  //   "OP_INMOBILIARIAS",
-  //   "CONTRATOS_PRIVADOS"
-  // ]
-  getServiciosEnum() {
-    let data = {
-      serviciosRequeridos: []
+  async getAllServicios() {
+    try {
+      const servicios = await this.servicio.findMany();
+      return servicios;
+    } catch (error) {
+      this.logger.error(`Error obteniendo servicios: ${error.message}`);
+      throw new Error('Error obteniendo servicios');
     }
-    data.serviciosRequeridos = Object.values(ServicioRequerido)
-    return data
-    //return Object.values(ServicioRequerido);
-  }  
-  
+  }
   
   async create(createFormularioDto: CreateFormularioDto) {
     try {
-      // Buscar usuario por email
-      let usuario = await this.usersService.findByEmail(createFormularioDto.email).catch(() => null);
-      
-      // Si no existe, crearlo sin contraseña
-      if (!usuario) {
-        usuario = await this.usersService.create({
-          email: createFormularioDto.email,
-          nombre: createFormularioDto.nombreCompleto.split(' ')[0], // Extraer nombre del campo completo
-          apellido: createFormularioDto.nombreCompleto.split(' ')[1] || '',
-          edad: 0,
-          password: '',
+        // Obtener el nombre del servicio basado en el ID
+        const servicio = await this.servicio.findUnique({
+            where: { id: createFormularioDto.servicioId },
         });
-      }
 
-      return this.formulario.create({
-        data: {
-          ...createFormularioDto,
-          usuarioId: usuario.id, // Relacion del formulario con el usuario
-        },
-      });
+        if (!servicio) {
+            throw new Error(`Servicio con ID ${createFormularioDto.servicioId} no encontrado`);
+        }
+
+        // Buscar o crear el usuario
+        let usuario = await this.usersService.findByEmail(createFormularioDto.email).catch(() => null);
+        if (!usuario) {
+            usuario = await this.usersService.create({
+                email: createFormularioDto.email,
+                nombre: createFormularioDto.nombreCompleto.split(' ')[0],
+                apellido: createFormularioDto.nombreCompleto.split(' ')[1] || '',
+                edad: 0,
+                password: '',
+            });
+        }
+
+        // Crear el formulario con el servicio asociado
+        return this.formulario.create({
+            data: {
+                ...createFormularioDto,
+                usuarioId: usuario.id,
+                servicioId: servicio.id,  // Relacionar con el servicio
+            },
+        });
     } catch (error) {
-      this.logger.error(`Error creating form: ${error.message}`);
-      throw new Error(error);
+        this.logger.error(`Error creando formulario: ${error.message}`);
+        throw new Error(error);
     }
-  }
+}
 
   async exists(id: number) {
     const product = await this.formulario.findFirst({

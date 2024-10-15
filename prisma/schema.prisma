@@ -25,15 +25,23 @@ enum ServicioRequerido {
 }
 
 model Formulario {
-  id                 Int    @id @default(autoincrement())
+  id                 Int       @id @default(autoincrement())
   nombreCompleto     String
   email              String
   telefono           String
-  servicioRequerido  ServicioRequerido
   mensaje            String
-  available          Boolean @default(true)
-  usuario            Usuario? @relation(fields: [usuarioId], references: [id]) // Relación con Usuario
+  available          Boolean   @default(true)
+  usuario            Usuario?  @relation(fields: [usuarioId], references: [id]) // Relación con Usuario
   usuarioId          Int?
+  servicio           Servicio?  @relation(fields: [servicioId], references: [id]) // Relación con Servicio
+  servicioId         Int?
+}
+
+model Servicio {
+  id            Int          @id @default(autoincrement())
+  nombreServicio String
+
+  formularios    Formulario[]  // Relación inversa con Formulario
 }
 
 model Usuario {
@@ -45,5 +53,14 @@ model Usuario {
   password  String?
   role      Role   @default(USUARIO)
   deleted   Boolean @default(false)
-  formularios      Formulario[]  // Relación inversa
+  formularios      Formulario[]  // Relación inversa con Formulario
+}
+
+model Auth{
+
+  id        Int @id @default(autoincrement())
+
+  email     String @unique
+  name      String
+  password  String
 }

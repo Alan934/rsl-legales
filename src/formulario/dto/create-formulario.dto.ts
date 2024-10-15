@@ -1,5 +1,6 @@
-import { ServicioRequerido,  } from "@prisma/client";
+import { Type } from "class-transformer";
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString, Max, MaxLength } from "class-validator";
+import { number } from "joi";
 
 export class CreateFormularioDto {
     @IsString()
@@ -14,12 +15,13 @@ export class CreateFormularioDto {
     @MaxLength(13)
     telefono: string;
 
-    @IsEnum(ServicioRequerido)
-    servicioRequerido: ServicioRequerido;
-
     @IsString()
     @IsNotEmpty()
     mensaje: string;
 
     //usuarioId: Usuario
+    @IsNumber()
+    @IsNotEmpty()
+    @Type(() => number)
+    servicioId: number;
 }
