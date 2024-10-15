@@ -20,7 +20,6 @@ export class CreateFormularioDto {
     mensaje: string;
 
     //usuarioId: Usuario
-    @IsNumber()
     @IsNotEmpty()
     @Type(() => number)
     servicioId: number;
