@@ -30,8 +30,9 @@ export class FormularioService extends PrismaClient implements OnModuleInit{
   async create(createFormularioDto: CreateFormularioDto) {
     try {
         // Obtener el nombre del servicio basado en el ID
+        const servicioIdNumber = Number(createFormularioDto.servicioId);
         const servicio = await this.servicio.findUnique({
-            where: { id: createFormularioDto.servicioId },
+            where: { id: servicioIdNumber },
         });
 
         if (!servicio) {
