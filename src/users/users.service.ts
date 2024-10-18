@@ -17,13 +17,17 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         this.logger.log('Users Connected to DB');
     }
 
+    getRandomNumber(): number {
+      return Math.floor(Math.random() * 1000) + 1;
+    }
+    
     getAll(){
         try {
             return this.usuario.findMany({
                 where: { deleted: false },
             });
         } catch (error) {
-          throw new Error(error.message);
+            throw new HttpException('Bad Request Get All', HttpStatus.BAD_REQUEST)
         }
     }
 
@@ -45,16 +49,11 @@ export class UsersService extends PrismaClient implements OnModuleInit {
             })
 
             if (!user) {
-              throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: 'User not found',
-              }, HttpStatus.BAD_REQUEST, {
-                cause: 'User not found'
-              });
+                throw new HttpException(`Error user with id #${id} not found`, HttpStatus.NOT_FOUND)
             }
             return {user};
         } catch (error) {
-          throw new Error(error.message);
+            throw new HttpException(`Error user with id #${id} not found`, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -63,12 +62,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
             where: { email, deleted: false },
         });
         if (!user) {
-          throw new HttpException({
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Email not registered',
-          }, HttpStatus.BAD_REQUEST, {
-            cause: 'Email not registered'
-          });
+            throw new NotFoundException(`User with email ${email} not found`);
         }
         return user;
     }
@@ -88,7 +82,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
             },
           });
         } catch (error) {
-          throw new Error(error.message);
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
       }
 
@@ -101,7 +95,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
                 data: updateUserDto,
             });
         } catch (error) {
-          throw new Error(error.message);
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -113,7 +107,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
             });
             return user;
         } catch (error) {
-          throw new Error(error.message);
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }      
     }
 
@@ -123,7 +117,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
                 where: { deleted: false },
             });
         } catch (error) {
-          throw new Error(error.message);
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -147,7 +141,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       this.usersCountForDay = { date: today, value: incrementedUsers };
       return incrementedUsers;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error);
     }
   }
 
@@ -165,7 +159,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       this.signaturesCountForDay = { date: today, value: incrementedSignatures };
       return incrementedSignatures;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error);
     }
   }
 
@@ -183,7 +177,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       this.recordsCountForDay = { date: today, value: incrementedRecords };
       return incrementedRecords;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error);
     }
   }
 }

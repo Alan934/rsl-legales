@@ -2,14 +2,11 @@
 import {
     CanActivate,
     ExecutionContext,
-    HttpException,
-    HttpStatus,
     Injectable,
     UnauthorizedException,
   } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
-import { error } from 'console';
 
   
   @Injectable()
@@ -34,13 +31,8 @@ import { error } from 'console';
 
         request['token'] = newToken;
 
-      } catch(error) {
-        throw new HttpException({
-          status: HttpStatus.UNAUTHORIZED,
-          error: `Invalid Token/Expired Token`,
-        }, HttpStatus.UNAUTHORIZED, {
-          cause: error
-        });
+      } catch {
+        throw new UnauthorizedException();
       }
       return true;
     }

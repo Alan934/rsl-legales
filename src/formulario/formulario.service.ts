@@ -20,7 +20,9 @@ export class FormularioService extends PrismaClient implements OnModuleInit{
   async getAllServicios() {
     try {
       const servicios = await this.servicio.findMany();
-      return servicios;
+      return {
+        servicios,
+      };
     } catch (error) {
       this.logger.error(`Error obteniendo servicios: ${error.message}`);
       throw new Error('Error obteniendo servicios');

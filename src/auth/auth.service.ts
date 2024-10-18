@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto, RegisterUserDto } from './dto';
@@ -37,7 +37,8 @@ export class AuthService extends PrismaClient implements OnModuleInit{
 
 
         } catch (error) {
-              throw new Error(error.message);
+            console.log(error);
+        
         }
         
     }
@@ -48,22 +49,17 @@ export class AuthService extends PrismaClient implements OnModuleInit{
 
         try {
             
-            const user = await this.auth.findUnique({
+            const user = await this.user.findUnique({
                 where: {
                     email
                 }
             })
 
             if(user) {
-                throw new HttpException({
-                    status: HttpStatus.BAD_REQUEST,
-                    error: 'User already registered',
-                  }, HttpStatus.BAD_REQUEST, {
-                    cause: 'User already registered'
-                  });
+                console.log(`user already exist`)
             }
 
-            const newUser = await this.auth.create({
+            const newUser = await this.user.create({
                 data: {
                     email: email,
                     name: name,
@@ -79,7 +75,7 @@ export class AuthService extends PrismaClient implements OnModuleInit{
             }
 
         } catch (error) {
-            throw new Error(error.message);
+            console.log(error)
         }
     }
 
@@ -88,28 +84,18 @@ export class AuthService extends PrismaClient implements OnModuleInit{
         const {email, password} = loginUserDto;
         try {
             
-            const user = await this.auth.findUnique({
+            const user = await this.user.findUnique({
                 where: { email: email}
             })
             
             if(!user) {
-                throw new HttpException({
-                    status: HttpStatus.BAD_REQUEST,
-                    error: 'User not found',
-                  }, HttpStatus.BAD_REQUEST, {
-                    cause: 'User not found'
-                  });
+                console.log(`User not found`)
             }
 
             const isPasswordValid = bcrypt.compareSync(password, user.password);
 
             if(!isPasswordValid) {
-                throw new HttpException({
-                    status: HttpStatus.BAD_REQUEST,
-                    error: 'Invalid Password',
-                  }, HttpStatus.BAD_REQUEST, {
-                    cause: 'Invalid Password'
-                  });
+                console.log(`Invalid password`)
             }
 
             const { password: __, ...rest} = user;
@@ -120,7 +106,7 @@ export class AuthService extends PrismaClient implements OnModuleInit{
             }
 
         } catch (error) {
-            throw new Error(error.message);
+            console.log(error)
         }
     }
 
