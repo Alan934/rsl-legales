@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Logger, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Logger, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { IpService } from './ip.service';
 
@@ -10,21 +11,20 @@ export class IpController {
     constructor(private readonly ipService: IpService) {}
 
     @Post()
-    async saveIp(@Body() body: { ip: string }) {
-        const { ip } = body;
+    async saveIp(@Req() req: Request, @Body() body: { ip?: string }) {
+      let ip = body.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        if (!ip) {
-            this.logger.error('No IP provided in the request body');
-            throw new BadRequestException('IP is required');
-        }
+      // Si x-forwarded-for es un array, toma la primera IP (la más cercana al cliente)
+      if (Array.isArray(ip)) {
+        ip = ip[0];
+      }
+      
+      if (!ip) {
+        throw new Error('IP is required');
+      }
 
-        try {
-            this.logger.log(`Saving IP: ${ip}`);
-            await this.ipService.saveIp(ip);
-            return { message: 'IP guardada correctamente' };
-        } catch (error) {
-            this.logger.error(`Error al guardar la IP: ${error.message}`);
-            throw new BadRequestException(`Error al guardar la IP: ${error.message}`);
-        }
+      this.logger.log(`Guardando IP: ${ip}`);
+      await this.ipService.saveIp(ip);
+      return { message: 'IP guardada correctamente' };
     }
 }
