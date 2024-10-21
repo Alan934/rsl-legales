@@ -8,24 +8,11 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
   
   @UseGuards(AuthGuard)
   @Get()
   getAll() {
     return this.usersService.getAll();
-  }
-  
-  @Post('ip')
-  async saveIp(@Body() body: { ip: string }) {
-    const { ip } = body;
-
-    if (!ip) {
-      throw new Error('IP is required');
-    }
-
-    await this.usersService.saveIp(ip);
-    return { message: 'IP guardada correctamente' };
   }
 
   @Get('count')
