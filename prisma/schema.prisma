@@ -40,7 +40,6 @@ model Formulario {
 model Servicio {
   id            Int          @id @default(autoincrement())
   nombreServicio String
-  valorServicio  String
 
   formularios    Formulario[]  // Relación inversa con Formulario
 }
@@ -57,7 +56,7 @@ model Usuario {
   formularios      Formulario[]  // Relación inversa con Formulario
 }
 
-model User{
+model Auth{
 
   id        Int @id @default(autoincrement())
 

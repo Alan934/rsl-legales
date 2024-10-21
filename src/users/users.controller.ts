@@ -2,12 +2,14 @@ import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nes
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from 'src/auth/guards';
+import { ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('Usuarios')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  
   @UseGuards(AuthGuard)
   @Get()
   getAll() {
@@ -19,11 +21,6 @@ export class UsersController {
       return await this.usersService.getUsersWithIncrement();
   }
   
-  @Get('random-number')
-  getRandomNumber() {
-    return { randomNumber: this.usersService.getRandomNumber() };
-  }
-
   @Get('countsignature')
   async countSignatures() {
       return await this.usersService.getSignaturesCount();

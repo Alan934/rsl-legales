@@ -1,4 +1,6 @@
+import { Transform, Type } from "class-transformer";
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString, Max, MaxLength } from "class-validator";
+import { number } from "joi";
 
 export class CreateFormularioDto {
     @IsString()
@@ -20,5 +22,6 @@ export class CreateFormularioDto {
     //usuarioId: Usuario
     @IsNumber()
     @IsNotEmpty()
+    @Transform(({ value }) => Number(value))
     servicioId: number;
 }

@@ -3,7 +3,9 @@ import { FormularioService } from './formulario.service';
 import { CreateFormularioDto } from './dto/create-formulario.dto';
 import { UpdateFormularioDto } from './dto/update-formulario.dto';
 import { AuthGuard } from 'src/auth/guards';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Formulario')
 @Controller('formulario')
 export class FormularioController {
   constructor(private readonly formularioService: FormularioService) {}
