@@ -16,19 +16,31 @@ export class UsersController {
     return this.usersService.getAll();
   }
   
+  @Post('ip')
+  async saveIp(@Body() body: { ip: string }) {
+    const { ip } = body;
+
+    if (!ip) {
+      throw new Error('IP is required');
+    }
+
+    await this.usersService.saveIp(ip);
+    return { message: 'IP guardada correctamente' };
+  }
+
   @Get('count')
   async countUsers() {
-      return await this.usersService.getUsersWithIncrement();
+    return await this.usersService.getUsersWithIncrement();
   }
   
   @Get('countsignature')
   async countSignatures() {
-      return await this.usersService.getSignaturesCount();
+    return await this.usersService.getSignaturesCount();
   }
 
   @Get('countrecord')
   async countRecord() {
-      return await this.usersService.getRecordsCount();
+    return await this.usersService.getRecordsCount();
   }
 
   @UseGuards(AuthGuard)

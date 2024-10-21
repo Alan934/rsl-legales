@@ -186,4 +186,24 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       throw new Error(error.message);
     }
   }
+
+  async saveIp(ip: string) {
+    try {
+      return await this.iPAddress.create({
+        data: {
+          ip: ip,
+        },
+      });
+    } catch (error) {
+      throw new Error(`Error al guardar la IP: ${error.message}`);
+    }
+  }
+
+  async getAllIps() {
+    try {
+      return await this.iPAddress.findMany();
+    } catch (error) {
+      throw new Error(`Error al obtener las IPs: ${error.message}`);
+    }
+  }
 }

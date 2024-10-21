@@ -64,3 +64,9 @@ model Auth{
   name      String
   password  String
 }
+
+model IPAddress {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  createdAt DateTime @default(now())
+}
