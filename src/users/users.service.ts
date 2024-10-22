@@ -93,16 +93,16 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       }
 
     update(id: number, updateUserDto: UpdateUserDto){
-        try {
-            return this.usuario.update({
-                where: {
-                    id: id,
-                },
-                data: updateUserDto,
-            });
-        } catch (error) {
-          throw new Error(error.message);
-        }
+      try {
+          return this.usuario.update({
+              where: {
+                  id: id,
+              },
+              data: updateUserDto,
+          });
+      } catch (error) {
+        throw new Error(error.message);
+      }
     }
 
     async delete(id: number){
