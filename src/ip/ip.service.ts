@@ -20,7 +20,7 @@ export class IpService extends PrismaClient implements OnModuleInit {
         },
       });
     } catch (error) {
-      throw new Error(`Error al crear la IP: ${error.message}`);
+      throw new Error(`Error al Crear la IP: ${error.message}`);
     }
   }
 
@@ -32,7 +32,7 @@ export class IpService extends PrismaClient implements OnModuleInit {
         },
       });
     } catch (error) {
-      throw new Error(`Error al obtener las IPs: ${error.message}`);
+      throw new Error(`Error al Obtener las IPs: ${error.message}`);
     }
   }
 
@@ -49,20 +49,32 @@ export class IpService extends PrismaClient implements OnModuleInit {
       }
       return ipFound;
     } catch (error) {
-      throw new Error(`Error al obtener la IP: ${error.message}`);
+      throw new Error(`Error al Obtener la IP: ${error.message}`);
     }
   }
 
   async update(id: number, updateIpDto: UpdateIpDto) {
     try {
-        return this.iPAddress.update({
-            where: {
-                id: id,
-            },
-            data: updateIpDto,
-        });
+      return this.iPAddress.update({
+          where: {
+              id: id,
+          },
+          data: updateIpDto,
+      });
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(`Error al Actualizar la IP: ${error.message}`);
     }
+  }
+
+  async delete(id: number) {
+    try {
+      const ip = await this.iPAddress.update({
+          where: { id },
+          data: { deleted: true },
+      });
+      return ip;
+    } catch (error) {
+      throw new Error(`Error al Eliminar la IP: ${error.message}`);
+    }    
   }
 }
